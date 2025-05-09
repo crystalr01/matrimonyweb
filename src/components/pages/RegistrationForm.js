@@ -63,10 +63,22 @@ function RegistrationForm() {
     // Handle input changes
     const handleInputChange = (section, e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [section]: { ...prev[section], [name]: value },
-        }));
+        setFormData((prev) => {
+            const newFormData = {
+                ...prev,
+                [section]: { ...prev[section], [name]: value },
+            };
+            
+            // If phone number is changed in personal details, update calling number
+            if (section === "personal" && name === "phoneNumber") {
+                newFormData.contact = {
+                    ...newFormData.contact,
+                    callingNumber: value
+                };
+            }
+            
+            return newFormData;
+        });
         setErrors((prev) => ({ ...prev, [section]: { ...prev[section], [name]: "" } }));
     };  
 
@@ -931,20 +943,15 @@ function RegistrationForm() {
                                 type="text"
                                 id="callingNumber"
                                 name="callingNumber"
-                                value={formData.contact.callingNumber}
-                                onChange={(e) => handleInputChange("contact", e)}
-                                style={inputStyle}
-                                placeholder="+1234567890"
-                                onFocus={(e) => {
-                                    e.currentTarget.style.borderColor = inputFocusStyle.borderColor;
-                                    e.currentTarget.style.boxShadow = inputFocusStyle.boxShadow;
+                                value={formData.personal.phoneNumber}
+                                style={{
+                                    ...inputStyle,
+                                    backgroundColor: "#f0f0f0",
+                                    cursor: "not-allowed",
+                                    opacity: "0.8"
                                 }}
-                                onBlur={(e) => {
-                                    e.currentTarget.style.borderColor = inputStyle.border;
-                                    e.currentTarget.style.boxShadow = "none";
-                                }}
+                                readOnly
                             />
-                            {errors.contact?.callingNumber && <span style={errorStyle}>{errors.contact.callingNumber}</span>}
                         </div>
                     </div>
                 </form>
