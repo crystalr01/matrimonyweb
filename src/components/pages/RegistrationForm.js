@@ -16,9 +16,9 @@ function RegistrationForm() {
             heightFeet: "",
             heightInches: "",
             maritalStatus: "",
-            gender: "",
-            religion: "",
-            caste: "",
+            gender: "Female",
+            religion: "Hindu",
+            caste: "Maratha",
             interCasteAllowed: "",
         },
         educational: {
@@ -27,7 +27,7 @@ function RegistrationForm() {
             currentPlace: "",
             nativePlace: "",
             taluka: "",
-            district: "",
+            district: "Sangli",
         },
         contact: {
             whatsappNumber: "",
@@ -44,10 +44,10 @@ function RegistrationForm() {
 
     // Dropdown options
     const maritalStatusOptions = ["Single", "Married", "Divorced", "Widowed"];
-    const genderOptions = ["Male", "Female", "Other"];
-    const religionOptions = ["Hindu", "Muslim", "Christian", "Sikh", "Jain", "Buddhist", "Other"];
+    const genderOptions = ["Female"];
+    const religionOptions = ["Hindu"];
     const casteOptions = {
-        Hindu: ["Brahmin", "Kshatriya", "Vaishya", "Shudra", "Other"],
+        Hindu: ["Maratha"],
         Muslim: ["Sunni", "Shia", "Other"],
         Christian: ["Catholic", "Protestant", "Other"],
         Sikh: ["Jat", "Khatri", "Other"],
@@ -58,8 +58,7 @@ function RegistrationForm() {
     const interCasteOptions = ["Yes", "No"];
     const educationOptions = ["High School", "Bachelor's", "Master's", "PhD", "Other"];
     const professionOptions = ["Engineer", "Doctor", "Teacher", "Business", "Student", "Other"];
-    const talukaOptions = ["Pune", "Nashik", "Aurangabad", "Solapur", "Other"];
-    const districtOptions = ["Pune", "Mumbai", "Nagpur", "Thane", "Other"];
+    const districtOptions = ["Sangli"];
 
     // Handle input changes
     const handleInputChange = (section, e) => {
@@ -69,7 +68,7 @@ function RegistrationForm() {
             [section]: { ...prev[section], [name]: value },
         }));
         setErrors((prev) => ({ ...prev, [section]: { ...prev[section], [name]: "" } }));
-    };
+    };  
 
     // Handle file uploads
     const handleFileChange = (type, e) => {
@@ -193,9 +192,9 @@ function RegistrationForm() {
                     heightFeet: "",
                     heightInches: "",
                     maritalStatus: "",
-                    gender: "",
-                    religion: "",
-                    caste: "",
+                    gender: "Female",
+                    religion: "Hindu",
+                    caste: "Maratha",
                     interCasteAllowed: "",
                 },
                 educational: {
@@ -204,7 +203,7 @@ function RegistrationForm() {
                     currentPlace: "",
                     nativePlace: "",
                     taluka: "",
-                    district: "",
+                    district: "Sangli",
                 },
                 contact: {
                     whatsappNumber: "",
@@ -653,7 +652,6 @@ function RegistrationForm() {
                                     e.currentTarget.style.boxShadow = "none";
                                 }}
                             >
-                                <option value="">Select</option>
                                 {genderOptions.map((option) => (
                                     <option key={option} value={option}>
                                         {option}
@@ -681,7 +679,6 @@ function RegistrationForm() {
                                     e.currentTarget.style.boxShadow = "none";
                                 }}
                             >
-                                <option value="">Select</option>
                                 {religionOptions.map((option) => (
                                     <option key={option} value={option}>
                                         {option}
@@ -709,7 +706,6 @@ function RegistrationForm() {
                                     e.currentTarget.style.boxShadow = "none";
                                 }}
                             >
-                                <option value="">Select</option>
                                 {(casteOptions[formData.personal.religion] || casteOptions.Other).map((option) => (
                                     <option key={option} value={option}>
                                         {option}
@@ -759,12 +755,14 @@ function RegistrationForm() {
                             <label style={labelStyle} htmlFor="education">
                                 Education *
                             </label>
-                            <select
+                            <input
+                                type="text"
                                 id="education"
                                 name="education"
                                 value={formData.educational.education}
                                 onChange={(e) => handleInputChange("educational", e)}
-                                style={selectStyle}
+                                style={inputStyle}
+                                placeholder="Enter your education"
                                 onFocus={(e) => {
                                     e.currentTarget.style.borderColor = inputFocusStyle.borderColor;
                                     e.currentTarget.style.boxShadow = inputFocusStyle.boxShadow;
@@ -773,26 +771,21 @@ function RegistrationForm() {
                                     e.currentTarget.style.borderColor = inputStyle.border;
                                     e.currentTarget.style.boxShadow = "none";
                                 }}
-                            >
-                                <option value="">Select</option>
-                                {educationOptions.map((option) => (
-                                    <option key={option} value={option}>
-                                        {option}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.educational?.education && <span style={errorStyle}>{errors.personal.education}</span>}
+                            />
+                            {errors.educational?.education && <span style={errorStyle}>{errors.educational.education}</span>}
                         </div>
                         <div style={inputGroupStyle}>
                             <label style={labelStyle} htmlFor="profession">
                                 Profession *
                             </label>
-                            <select
+                            <input
+                                type="text"
                                 id="profession"
                                 name="profession"
                                 value={formData.educational.profession}
                                 onChange={(e) => handleInputChange("educational", e)}
-                                style={selectStyle}
+                                style={inputStyle}
+                                placeholder="Enter your profession"
                                 onFocus={(e) => {
                                     e.currentTarget.style.borderColor = inputFocusStyle.borderColor;
                                     e.currentTarget.style.boxShadow = inputFocusStyle.boxShadow;
@@ -801,14 +794,7 @@ function RegistrationForm() {
                                     e.currentTarget.style.borderColor = inputStyle.border;
                                     e.currentTarget.style.boxShadow = "none";
                                 }}
-                            >
-                                <option value="">Select</option>
-                                {professionOptions.map((option) => (
-                                    <option key={option} value={option}>
-                                        {option}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                             {errors.educational?.profession && <span style={errorStyle}>{errors.educational.profession}</span>}
                         </div>
                         <div style={inputGroupStyle}>
@@ -859,12 +845,14 @@ function RegistrationForm() {
                             <label style={labelStyle} htmlFor="taluka">
                                 Taluka *
                             </label>
-                            <select
+                            <input
+                                type="text"
                                 id="taluka"
                                 name="taluka"
                                 value={formData.educational.taluka}
                                 onChange={(e) => handleInputChange("educational", e)}
-                                style={selectStyle}
+                                style={inputStyle}
+                                placeholder="Enter your taluka"
                                 onFocus={(e) => {
                                     e.currentTarget.style.borderColor = inputFocusStyle.borderColor;
                                     e.currentTarget.style.boxShadow = inputFocusStyle.boxShadow;
@@ -873,14 +861,7 @@ function RegistrationForm() {
                                     e.currentTarget.style.borderColor = inputStyle.border;
                                     e.currentTarget.style.boxShadow = "none";
                                 }}
-                            >
-                                <option value="">Select</option>
-                                {talukaOptions.map((option) => (
-                                    <option key={option} value={option}>
-                                        {option}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                             {errors.educational?.taluka && <span style={errorStyle}>{errors.educational.taluka}</span>}
                         </div>
                         <div style={inputGroupStyle}>
@@ -902,7 +883,6 @@ function RegistrationForm() {
                                     e.currentTarget.style.boxShadow = "none";
                                 }}
                             >
-                                <option value="">Select</option>
                                 {districtOptions.map((option) => (
                                     <option key={option} value={option}>
                                         {option}
