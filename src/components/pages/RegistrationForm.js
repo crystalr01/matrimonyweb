@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FiSave } from "react-icons/fi";
+import { FiSave, FiX } from "react-icons/fi";
 import { getDatabase, ref, set } from "firebase/database";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -68,7 +68,7 @@ function RegistrationForm() {
                 ...prev,
                 [section]: { ...prev[section], [name]: value },
             };
-            
+
             // If phone number is changed in personal details, update calling number
             if (section === "personal" && name === "phoneNumber") {
                 newFormData.contact = {
@@ -76,25 +76,41 @@ function RegistrationForm() {
                     callingNumber: value
                 };
             }
-            
+
             return newFormData;
         });
         setErrors((prev) => ({ ...prev, [section]: { ...prev[section], [name]: "" } }));
-    };  
+    };
 
-    // Handle file uploads
+
     const handleFileChange = (type, e) => {
-        const files = Array.from(e.target.files);
-        if (type === "photos" && files.length + formData.photos.length > 5) {
-            setErrors((prev) => ({ ...prev, photos: "Maximum 5 photos allowed" }));
-            return;
+        const newFiles = Array.from(e.target.files);
+
+        if (type === "photos") {
+            const combinedFiles = [...formData.photos, ...newFiles];
+
+            if (combinedFiles.length > 5) {
+                setErrors((prev) => ({ ...prev, photos: "Maximum 5 photos allowed" }));
+                return;
+            }
+
+            setFormData((prev) => ({
+                ...prev,
+                photos: combinedFiles,
+            }));
+
+            // Clear the input so the same file can be re-selected if needed
+            document.getElementById("photos").value = "";
+        } else if (type === "biodata") {
+            setFormData((prev) => ({
+                ...prev,
+                biodata: newFiles[0],
+            }));
         }
-        setFormData((prev) => ({
-            ...prev,
-            [type]: type === "photos" ? [...prev.photos, ...files] : files[0],
-        }));
+
         setErrors((prev) => ({ ...prev, [type]: "" }));
     };
+
 
     // Validate form
     const validateForm = () => {
@@ -439,7 +455,7 @@ function RegistrationForm() {
                     <p style={{ fontSize: "1.1rem" }}>{Math.round(uploadProgress)}% Complete</p>
                 </div>
             )}
-            
+
             {/* Personal Details Form */}
             <div style={formContainerStyle}>
                 <h2 style={formTitleStyle}>Personal Details</h2>
@@ -976,14 +992,47 @@ function RegistrationForm() {
                         />
                         {formData.photos.length > 0 && (
                             <div style={photoPreviewStyle}>
-                                {formData.photos.map((file, index) => (
-                                    <img
-                                        key={index}
-                                        src={URL.createObjectURL(file)}
-                                        alt={`Preview ${index + 1}`}
-                                        style={previewImageStyle}
-                                    />
-                                ))}
+                                {formData.photos.map((file, index) => {
+                                    const previewUrl = URL.createObjectURL(file);
+                                    <ul>
+                                        {formData.photos.map((file, idx) => (
+                                            <li key={idx}>{file.name}</li>
+                                        ))}
+                                    </ul>
+                                    return (
+                                        <div key={index} style={{ position: "relative" }}>
+                                            <img
+                                                src={previewUrl}
+                                                alt={`Preview ${index + 1}`}
+                                                style={previewImageStyle}
+                                                onLoad={() => URL.revokeObjectURL(previewUrl)}
+                                            />
+                                            <FiX
+                                                size={18}
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "-8px",
+                                                    right: "-8px",
+                                                    background: "rgba(255, 255, 255, 0.8)",
+                                                    borderRadius: "50%",
+                                                    cursor: "pointer",
+                                                    padding: "2px",
+                                                    color: "red",
+                                                    boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                                                }}
+                                                onClick={() => {
+                                                    setFormData((prev) => {
+                                                        const newPhotos = [...prev.photos];
+                                                        newPhotos.splice(index, 1); // remove the clicked photo
+                                                        return { ...prev, photos: newPhotos };
+                                                    });
+                                                }}
+                                                title="Remove image"
+                                            />
+                                        </div>
+                                    );
+                                })}
+
                             </div>
                         )}
                         {errors.photos && <span style={errorStyle}>{errors.photos}</span>}
@@ -1002,11 +1051,35 @@ function RegistrationForm() {
                         />
                         {formData.biodata && (
                             <div style={photoPreviewStyle}>
-                                <img
-                                    src={URL.createObjectURL(formData.biodata)}
-                                    alt="Biodata Preview"
-                                    style={previewImageStyle}
-                                />
+                                <div style={{ position: "relative" }}>
+                                    <img
+                                        src={URL.createObjectURL(formData.biodata)}
+                                        alt="Biodata Preview"
+                                        style={previewImageStyle}
+                                    />
+                                    <FiX
+                                        size={18}
+                                        style={{
+                                            position: "absolute",
+                                            top: "-8px",
+                                            right: "-8px",
+                                            background: "rgba(255, 255, 255, 0.8)",
+                                            borderRadius: "50%",
+                                            cursor: "pointer",
+                                            padding: "2px",
+                                            color: "red",
+                                            boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                                        }}
+                                        onClick={() => {
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                biodata: null,
+                                            }));
+                                            document.getElementById("biodata").value = "";
+                                        }}
+                                        title="Remove biodata image"
+                                    />
+                                </div>
                             </div>
                         )}
                         {errors.biodata && <span style={errorStyle}>{errors.biodata}</span>}
