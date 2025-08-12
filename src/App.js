@@ -5,6 +5,7 @@ import Dashboard from "./components/Dashboard";
 import ProfileDetails from "./components/pages/ProfilePage";
 import UserDetail from "./components/pages/UserDetail";
 import UserLogin from "./components/pages/UserLogin";
+import Edit from "./components/pages/Edit";
 import "./App.css";
 
 function App() {
@@ -37,8 +38,8 @@ function App() {
       setActiveMenu("Home");
     } else if (path === "/login") {
       setActiveMenu("Login");
-    } else if (path.startsWith("/profile/") || path.startsWith("/user/")) {
-      // Don't change the active menu on detail pages
+    } else if (path.startsWith("/profile/") || path.startsWith("/user/") || path.startsWith("/edit/")) {
+      // Don't change the active menu on detail pages or edit pages
       return;
     } else {
       const menuName = path.substring(1);
@@ -131,6 +132,7 @@ function App() {
             />
             <Route path="/user/:id" element={<UserDetail />} />
             <Route path="/profile/:id" element={<ProfileDetails />} />
+            <Route path="/edit/:userId" element={<Edit />} />
           </>
         )}
       </Routes>
