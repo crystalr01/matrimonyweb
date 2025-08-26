@@ -2,14 +2,16 @@ import React, { useEffect } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 
 export const menuItems = [
-    { id: 1, label: "Home", icon: "🏠" },
-    { id: 2, label: "Profile", icon: "👤" },
-    { id: 3, label: "Matches", icon: "💞" },
-    { id: 4, label: "Messages", icon: "✉️" },
-    { id: 5, label: "Settings", icon: "⚙️" },
-    { id: 6, label: "Registration", icon: "📝" },
-    { id: 7, label: "Logout", icon: "🔓" },
+    { id: 1, label: "Home", icon: "🏠", path: "/" },
+    { id: 2, label: "Profile", icon: "👤", path: "/profile" },
+    { id: 3, label: "Matches", icon: "💞", path: "/matches" },
+    { id: 4, label: "Messages", icon: "✉️", path: "/messages" },
+    { id: 5, label: "Settings", icon: "⚙️", path: "/settings" },
+    { id: 6, label: "Registration", icon: "📝", path: "/registration" },
+    { id: 7, label: "Logout", icon: "🔓", path: "/logout" },
+    { id: 8, label: "Privacy Policy", icon: "🔒", path: "/privacy-policy" }, // ✅ corrected
 ];
+
 
 function Sidebar({ activeMenu, setActiveMenu, isSidebarOpen, toggleSidebar }) {
     useEffect(() => {
@@ -83,8 +85,18 @@ function Sidebar({ activeMenu, setActiveMenu, isSidebarOpen, toggleSidebar }) {
 
     // We're just going to use the setActiveMenu function passed from App.js
     // which now includes navigation logic
-    const handleMenuClick = (label) => {
-        setActiveMenu(label);
+    const handleMenuClick = (item) => {
+        setActiveMenu(item.label);
+        if (item.label === "Logout") {
+            alert("Logging out...");
+            localStorage.removeItem('matrimonyUserPhone');
+            setActiveMenu("Login");
+        } else {
+            // Use the provided path
+            window.history.pushState({}, "", item.path);
+            const navEvent = new PopStateEvent("popstate");
+            window.dispatchEvent(navEvent);
+        }
     };
 
     return (
@@ -113,16 +125,9 @@ function Sidebar({ activeMenu, setActiveMenu, isSidebarOpen, toggleSidebar }) {
                 <div
                     key={item.id}
                     style={menuItemStyle(activeMenu === item.label)}
-                    onClick={() => handleMenuClick(item.label)}
+                    onClick={() => handleMenuClick(item)}
                     role="button"
                     tabIndex={0}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                            handleMenuClick(item.label);
-                        }
-                    }}
-                    aria-current={activeMenu === item.label ? "page" : undefined}
-                    title={item.label}
                 >
                     <span style={menuIconStyle} aria-hidden="true">
                         {item.icon}
@@ -130,6 +135,7 @@ function Sidebar({ activeMenu, setActiveMenu, isSidebarOpen, toggleSidebar }) {
                     {isSidebarOpen && <span>{item.label}</span>}
                 </div>
             ))}
+
         </nav>
     );
 }

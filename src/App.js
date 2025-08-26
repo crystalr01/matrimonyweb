@@ -7,6 +7,7 @@ import UserDetail from "./components/pages/UserDetail";
 import UserLogin from "./components/pages/UserLogin";
 import Edit from "./components/pages/Edit";
 import "./App.css";
+import PrivacyPolicy from "./components/pages/PrivacyPolicy";
 
 function App() {
   const [activeMenu, setActiveMenu] = useState("Home");
@@ -130,9 +131,11 @@ function App() {
                 <Dashboard activeMenu="Registration" className="dashboard" />
               }
             />
+
             <Route path="/user/:id" element={<UserDetail />} />
             <Route path="/profile/:id" element={<ProfileDetails />} />
             <Route path="/edit/:userId" element={<Edit />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           </>
         )}
       </Routes>
