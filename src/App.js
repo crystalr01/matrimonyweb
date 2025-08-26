@@ -18,8 +18,8 @@ function App() {
 
   // Check localStorage for authentication on app load
   useEffect(() => {
-    const storedPhone = localStorage.getItem('matrimonyUserPhone');
-    if (storedPhone === '9370329233') {
+    const storedPhone = localStorage.getItem("matrimonyUserPhone");
+    if (storedPhone === "9370329233") {
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
@@ -39,7 +39,11 @@ function App() {
       setActiveMenu("Home");
     } else if (path === "/login") {
       setActiveMenu("Login");
-    } else if (path.startsWith("/profile/") || path.startsWith("/user/") || path.startsWith("/edit/")) {
+    } else if (
+      path.startsWith("/profile/") ||
+      path.startsWith("/user/") ||
+      path.startsWith("/edit/")
+    ) {
       // Don't change the active menu on detail pages or edit pages
       return;
     } else {
@@ -58,7 +62,11 @@ function App() {
   useEffect(() => {
     if (isAuthenticated && location.pathname === "/login") {
       navigate("/");
-    } else if (!isAuthenticated && location.pathname !== "/login") {
+    } else if (
+      !isAuthenticated &&
+      location.pathname !== "/login" &&
+      location.pathname !== "/privacy-policy" // ✅ allow public access
+    ) {
       navigate("/login");
     }
   }, [isAuthenticated, location, navigate]);
@@ -71,7 +79,7 @@ function App() {
     if (label === "Logout") {
       alert("Logging out...");
       setIsAuthenticated(false);
-      localStorage.removeItem('matrimonyUserPhone'); // Clear authentication
+      localStorage.removeItem("matrimonyUserPhone"); // Clear authentication
       setActiveMenu("Login");
       navigate("/login");
     } else {
@@ -99,43 +107,22 @@ function App() {
       )}
 
       <Routes>
-        <Route
-          path="/login"
-          element={<UserLogin onLoginSuccess={handleLoginSuccess} />}
-        />
+        {/* Public Routes */}
+        <Route path="/login" element={<UserLogin onLoginSuccess={handleLoginSuccess} />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} /> {/* ✅ public */}
+
+        {/* Private Routes */}
         {isAuthenticated && (
           <>
-            <Route
-              path="/"
-              element={<Dashboard activeMenu="Home" className="dashboard" />}
-            />
-            <Route
-              path="/profile"
-              element={<Dashboard activeMenu="Profile" className="dashboard" />}
-            />
-            <Route
-              path="/matches"
-              element={<Dashboard activeMenu="Matches" className="dashboard" />}
-            />
-            <Route
-              path="/messages"
-              element={<Dashboard activeMenu="Messages" className="dashboard" />}
-            />
-            <Route
-              path="/settings"
-              element={<Dashboard activeMenu="Settings" className="dashboard" />}
-            />
-            <Route
-              path="/registration"
-              element={
-                <Dashboard activeMenu="Registration" className="dashboard" />
-              }
-            />
-
+            <Route path="/" element={<Dashboard activeMenu="Home" className="dashboard" />} />
+            <Route path="/profile" element={<Dashboard activeMenu="Profile" className="dashboard" />} />
+            <Route path="/matches" element={<Dashboard activeMenu="Matches" className="dashboard" />} />
+            <Route path="/messages" element={<Dashboard activeMenu="Messages" className="dashboard" />} />
+            <Route path="/settings" element={<Dashboard activeMenu="Settings" className="dashboard" />} />
+            <Route path="/registration" element={<Dashboard activeMenu="Registration" className="dashboard" />} />
             <Route path="/user/:id" element={<UserDetail />} />
             <Route path="/profile/:id" element={<ProfileDetails />} />
             <Route path="/edit/:userId" element={<Edit />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           </>
         )}
       </Routes>
